@@ -424,3 +424,201 @@ input:focus, textarea:focus{
   .nav-links.is-open{ display: flex; }
   .theme-toggle{ width: 100%; }
 }
+
+/* ================================
+   Motion + Hover System (Premium)
+   Append this at the end of styles.css
+=================================== */
+
+/* Better default transitions for interactives */
+a, button, .btn, .social, .pill, .to-top, .nav-links a {
+  transition: transform 180ms ease, box-shadow 220ms ease, background 220ms ease,
+              border-color 220ms ease, color 180ms ease, opacity 180ms ease;
+}
+
+/* Accessible focus */
+:focus-visible{
+  outline: 3px solid rgba(99,230,190,0.55);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* Nav link underline animation */
+.nav-links a{
+  position: relative;
+}
+.nav-links a::after{
+  content:"";
+  position:absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(99,230,190,0.9), rgba(255,212,59,0.7));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms ease;
+  border-radius: 999px;
+  opacity: 0.9;
+}
+.nav-links a:hover::after{
+  transform: scaleX(1);
+}
+
+/* Buttons: more “press” feel + subtle glow */
+.btn, .social, .theme-toggle, .nav-toggle{
+  will-change: transform;
+}
+.btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 22px 70px rgba(0,0,0,0.45);
+}
+.btn:active{
+  transform: translateY(0px) scale(0.98);
+}
+.btn-ghost:hover{
+  border-color: rgba(99,230,190,0.35);
+}
+
+/* Social / small clickables */
+.social:hover, .to-top:hover{
+  transform: translateY(-2px);
+  border-color: rgba(99,230,190,0.32);
+  color: var(--text);
+  text-decoration: none;
+}
+.theme-toggle:hover, .nav-toggle:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,212,59,0.28);
+}
+
+/* Pills: slight pop */
+.pill:hover{
+  transform: translateY(-2px);
+  border-color: rgba(255,212,59,0.25);
+  color: var(--text);
+}
+
+/* ---------- Card hover + spotlight + gentle 3D tilt ---------- */
+.card, .side-card, .project-card, .profile-card, .t-card, .contact-form{
+  position: relative;
+  overflow: hidden;
+  transform: translateY(0) rotateX(0deg) rotateY(0deg);
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 220ms ease, box-shadow 260ms ease, border-color 220ms ease;
+}
+
+/* Lift on hover */
+.card:hover, .side-card:hover, .project-card:hover, .profile-card:hover, .t-card:hover, .contact-form:hover{
+  transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  border-color: rgba(99,230,190,0.28);
+  box-shadow: 0 26px 80px rgba(0,0,0,0.48);
+}
+
+/* Spotlight overlay (follows cursor via CSS vars set in JS) */
+.card::before,
+.side-card::before,
+.project-card::before,
+.profile-card::before,
+.t-card::before,
+.contact-form::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 30%),
+    rgba(99,230,190,0.14),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 240ms ease;
+  pointer-events:none;
+}
+.card:hover::before,
+.side-card:hover::before,
+.project-card:hover::before,
+.profile-card:hover::before,
+.t-card:hover::before,
+.contact-form:hover::before{
+  opacity: 1;
+}
+
+/* Soft “sheen” line */
+.card::after,
+.side-card::after,
+.project-card::after,
+.profile-card::after,
+.t-card::after,
+.contact-form::after{
+  content:"";
+  position:absolute;
+  top:-40%;
+  left:-60%;
+  width: 70%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+  transform: rotate(18deg) translateX(-40%);
+  opacity: 0;
+  transition: transform 520ms ease, opacity 260ms ease;
+  pointer-events:none;
+}
+.card:hover::after,
+.side-card:hover::after,
+.project-card:hover::after,
+.profile-card:hover::after,
+.t-card:hover::after,
+.contact-form:hover::after{
+  opacity: 1;
+  transform: rotate(18deg) translateX(210%);
+}
+
+/* Timeline dot pulse on hover of item */
+.t-item:hover .t-dot{
+  box-shadow: 0 0 0 9px rgba(99,230,190,0.16);
+  transition: 220ms ease;
+}
+
+/* ---------- Ripple effect (created by JS) ---------- */
+.ripple{
+  position: absolute;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, rgba(99,230,190,0.35), transparent 60%);
+  animation: ripple 520ms ease-out forwards;
+  mix-blend-mode: screen;
+}
+@keyframes ripple{
+  to{
+    width: 280px;
+    height: 280px;
+    opacity: 0;
+  }
+}
+
+/* Reveal staggering support */
+.reveal{
+  transition-delay: var(--delay, 0ms);
+}
+
+/* Background “breathing” (very subtle) */
+.hero-bg{
+  animation: bgFloat 9s ease-in-out infinite;
+}
+@keyframes bgFloat{
+  0%,100%{ transform: translateY(0px); filter: saturate(1); }
+  50%{ transform: translateY(10px); filter: saturate(1.08); }
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal{ opacity: 1; transform: none; }
+}
