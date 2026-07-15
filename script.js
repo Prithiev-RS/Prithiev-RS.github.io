@@ -90,3 +90,78 @@ const projectLink = document.getElementById("projectLink");
 
 if (githubLink) githubLink.href = LINKS.github;
 if (projectLink) projectLink.href = LINKS.project;
+
+
+/* ================================
+   Premium hover: spotlight + gentle tilt
+   + ripple on click + reveal stagger
+=================================== */
+
+// Stagger reveal animations slightly so it feels hand-crafted
+(() => {
+  const reveals = document.querySelectorAll(".reveal");
+  reveals.forEach((el, i) => {
+    el.style.setProperty("--delay", `${Math.min(i * 60, 420)}ms`);
+  });
+})();
+
+// Ripple effect for clickables
+function addRipple(e) {
+  const target = e.currentTarget;
+  const rect = target.getBoundingClientRect();
+
+  // Ensure the target can contain absolutely positioned ripple
+  const style = window.getComputedStyle(target);
+  if (style.position === "static") target.style.position = "relative";
+  target.style.overflow = "hidden";
+
+  const ripple = document.createElement("span");
+  ripple.className = "ripple";
+
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  ripple.style.left = `${x}px`;
+  ripple.style.top = `${y}px`;
+
+  target.appendChild(ripple);
+  ripple.addEventListener("animationend", () => ripple.remove());
+}
+
+// Apply ripple to primary clickables
+document.querySelectorAll(".btn, .social, .nav-links a, .to-top, .theme-toggle").forEach((el) => {
+  el.addEventListener("click", addRipple);
+});
+
+// Spotlight + tilt for cards (desktop only)
+const isFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+if (isFinePointer) {
+  const cardLike = document.querySelectorAll(".card, .project-card, .side-card, .profile-card, .t-card, .contact-form");
+
+  cardLike.forEach((card) => {
+    card.addEventListener("mousemove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Spotlight position
+      card.style.setProperty("--mx", `${(x / rect.width) * 100}%`);
+      card.style.setProperty("--my", `${(y / rect.height) * 100}%`);
+
+      // Gentle tilt (max ~6deg)
+      const px = (x / rect.width) - 0.5;
+      const py = (y / rect.height) - 0.5;
+      const ry = px * 6;      // rotateY
+      const rx = -py * 6;     // rotateX
+      card.style.setProperty("--rx", `${rx.toFixed(2)}deg`);
+      card.style.setProperty("--ry", `${ry.toFixed(2)}deg`);
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.setProperty("--mx", `50%`);
+      card.style.setProperty("--my", `30%`);
+      card.style.setProperty("--rx", `0deg`);
+      card.style.setProperty("--ry", `0deg`);
+    });
+  });
+}
